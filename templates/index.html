@@ -1,0 +1,1394 @@
+<!doctype html>
+<html lang="vi" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>SmartSchedule 🌿</title>
+    <meta
+      name="description"
+      content="Ứng dụng Web App / PWA Quản lý Thời gian biểu dễ thương tone Xanh Mint Pastel, đính kèm file đa nhiệm, khung nhắc việc nổi trên màn hình và đếm ngược hạn công việc." />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#10B981" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="SmartSchedule" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="/static/icons/favicon.svg" />
+    <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png" />
+
+    <!-- Google Fonts: Quicksand & Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap"
+      rel="stylesheet" />
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Quicksand", "Nunito", "sans-serif"],
+            },
+            colors: {
+              mint: {
+                50: "#f0fdf9",
+                100: "#d1fae5",
+                200: "#a7f3d0",
+                300: "#6ee7b7",
+                400: "#34d399",
+                500: "#10b981",
+                600: "#059669",
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- FullCalendar v6 (Latest Global Bundle via CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales/vi.global.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css?v=20261124_11" />
+  </head>
+
+  <body
+    class="h-full flex flex-col cute-polka-bg text-teal-950 select-none md:select-auto overflow-hidden">
+    <!-- ====================================================================
+       TOP HEADER BAR (PASTEL MINT STYLE)
+       ==================================================================== -->
+    <header
+      class="bg-white/90 backdrop-blur-md border-b-2 border-emerald-200/80 px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2 z-30 shrink-0 shadow-sm shadow-emerald-100/50">
+      <!-- Left: Hamburger (Mobile) + Cute Mascot Brand + Date Navigation -->
+      <div class="flex items-center gap-2 sm:gap-3.5 min-w-0">
+        <button
+          id="btn-toggle-sidebar"
+          type="button"
+          class="md:hidden p-2 rounded-2xl text-emerald-700 bg-emerald-50 hover:bg-emerald-100 active:scale-95 transition"
+          aria-label="Mở bộ lọc & danh mục">
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h10" />
+          </svg>
+        </button>
+
+        <!-- Cute Mascot Logo & Brand -->
+        <div class="flex items-center gap-2.5 shrink-0">
+          <div
+            class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-emerald-200 text-xl animate-float-cute">
+            🐰
+          </div>
+          <div class="hidden sm:block">
+            <div class="flex items-center gap-1.5">
+              <h1
+                class="text-base font-extrabold tracking-tight bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent leading-none">
+                SmartSchedule
+              </h1>
+              <span class="text-xs">🌿</span>
+            </div>
+            <p
+              id="header-live-clock"
+              class="text-[11px] text-teal-600 font-bold mt-0.5">
+              🍀 Góc làm việc xanh mát
+            </p>
+          </div>
+        </div>
+
+        <div class="hidden lg:block h-6 w-0.5 bg-emerald-100 mx-1"></div>
+
+        <!-- Calendar Navigation Controls -->
+        <div class="flex items-center gap-1 sm:gap-1.5">
+          <button
+            id="btn-today"
+            type="button"
+            class="px-3 py-1.5 text-xs sm:text-sm font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-2xl hover:bg-emerald-100 active:scale-95 transition cursor-pointer">
+            🌱 Hôm nay
+          </button>
+          <div
+            class="flex items-center bg-teal-50 border border-teal-100 rounded-2xl p-0.5">
+            <button
+              id="btn-prev"
+              type="button"
+              class="p-1.5 rounded-xl text-teal-700 hover:bg-white hover:shadow-xs transition cursor-pointer"
+              title="Trước">
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              id="btn-next"
+              type="button"
+              class="p-1.5 rounded-xl text-teal-700 hover:bg-white hover:shadow-xs transition cursor-pointer"
+              title="Tiếp">
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          <h2
+            id="calendar-title"
+            class="text-xs sm:text-base font-extrabold text-teal-900 ml-1 truncate max-w-[130px] sm:max-w-xs">
+            Đang tải...
+          </h2>
+        </div>
+      </div>
+
+      <!-- Right: Search + View Switcher + HUD Toggle + Add Event -->
+      <div class="flex items-center gap-2 shrink-0">
+        <!-- Search Input (Desktop) -->
+        <div class="relative hidden xl:block w-52">
+          <span
+            class="absolute left-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
+            >🔍</span
+          >
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Tìm lịch, tài liệu..."
+            class="w-full pl-8 pr-7 py-1.5 text-xs font-semibold bg-emerald-50/70 border border-emerald-200 rounded-2xl focus:bg-white focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition" />
+          <button
+            id="btn-clear-search"
+            type="button"
+            class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-emerald-500 hover:text-emerald-700 font-bold">
+            &times;
+          </button>
+        </div>
+
+        <!-- View Mode Switcher (Desktop >= 768px) -->
+        <div
+          class="hidden md:flex items-center bg-emerald-50/90 p-1 rounded-2xl border border-emerald-200/80"
+          role="group"
+          aria-label="Chế độ xem lịch">
+          <button
+            type="button"
+            data-view="dayGridMonth"
+            class="view-btn px-3 py-1 text-xs font-bold rounded-xl text-teal-700 hover:text-emerald-600 transition cursor-pointer">
+            Tháng
+          </button>
+          <button
+            type="button"
+            data-view="timeGridWeek"
+            class="view-btn px-3 py-1 text-xs font-bold rounded-xl text-teal-700 hover:text-emerald-600 transition cursor-pointer">
+            Tuần
+          </button>
+          <button
+            type="button"
+            data-view="timeGridDay"
+            class="view-btn px-3 py-1 text-xs font-bold rounded-xl text-teal-700 hover:text-emerald-600 transition cursor-pointer">
+            Ngày
+          </button>
+          <button
+            type="button"
+            data-view="listWeek"
+            class="view-btn px-3 py-1 text-xs font-bold rounded-xl text-teal-700 hover:text-emerald-600 transition cursor-pointer">
+            Danh sách
+          </button>
+        </div>
+
+        <!-- Toggle Floating Task Notification HUD Button -->
+        <button
+          id="btn-toggle-hud"
+          type="button"
+          class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-teal-800 bg-teal-100/80 hover:bg-teal-200/70 border border-teal-200 rounded-2xl transition cursor-pointer"
+          title="Bật/Tắt Khung thông báo công việc cần làm & Đếm ngược trên màn hình">
+          <span>⏰</span>
+          <span class="hidden lg:inline">Khung nhắc việc</span>
+          <span
+            id="hud-badge-count"
+            class="px-1.5 py-0.2 bg-emerald-500 text-white rounded-full text-[10px]"
+            >0</span
+          >
+        </button>
+
+        <!-- PWA Install Button -->
+        <button
+          id="btn-install-pwa"
+          type="button"
+          class="hidden items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 border border-emerald-200 rounded-2xl transition cursor-pointer"
+          title="Cài đặt ứng dụng ra màn hình chính">
+          <span>📲</span>
+          <span class="hidden sm:inline">Cài App</span>
+        </button>
+
+        <!-- Primary Add Event Button -->
+        <button
+          id="btn-add-event"
+          type="button"
+          class="flex items-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:to-teal-600 active:scale-95 rounded-2xl shadow-md shadow-emerald-200 transition cursor-pointer">
+          <span>🍀</span>
+          <span class="hidden sm:inline">Thêm lịch mới</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ====================================================================
+       MOBILE SUB-HEADER: VIEW SWITCHER & CATEGORY CHIPS (< 768px)
+       ==================================================================== -->
+    <div
+      class="md:hidden bg-white/90 border-b border-emerald-200 px-3 py-2 flex flex-col gap-2 shrink-0">
+      <div
+        class="grid grid-cols-4 gap-1 bg-emerald-50 p-1 rounded-2xl border border-emerald-100">
+        <button
+          type="button"
+          data-view="timeGridDay"
+          class="view-btn py-1 text-xs font-bold rounded-xl text-center text-teal-700 transition">
+          Ngày
+        </button>
+        <button
+          type="button"
+          data-view="listWeek"
+          class="view-btn py-1 text-xs font-bold rounded-xl text-center text-teal-700 transition">
+          Danh sách
+        </button>
+        <button
+          type="button"
+          data-view="timeGridWeek"
+          class="view-btn py-1 text-xs font-bold rounded-xl text-center text-teal-700 transition">
+          Tuần
+        </button>
+        <button
+          type="button"
+          data-view="dayGridMonth"
+          class="view-btn py-1 text-xs font-bold rounded-xl text-center text-teal-700 transition">
+          Tháng
+        </button>
+      </div>
+
+      <div
+        id="mobile-category-chips"
+        class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+
+    <!-- ====================================================================
+       MAIN WORKSPACE: SIDEBAR + FULLCALENDAR
+       ==================================================================== -->
+    <div class="flex-1 flex overflow-hidden relative">
+      <!-- Mobile Backdrop -->
+      <div
+        id="sidebar-backdrop"
+        class="fixed inset-0 bg-teal-950/35 backdrop-blur-[2px] z-30 hidden md:hidden transition-opacity"></div>
+
+      <!-- LEFT SIDEBAR (Giới hạn tối đa 1/3 màn hình trên Laptop) -->
+      <aside
+        id="app-sidebar"
+        class="w-72 md:w-[31%] lg:w-[28%] xl:w-[25%] max-w-[360px] bg-white/95 backdrop-blur-md border-r-2 border-emerald-200/80 flex flex-col shrink-0 overflow-hidden z-40 fixed md:static inset-y-0 left-0 -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
+        <!-- Mobile Drawer Header -->
+        <div
+          class="md:hidden flex items-center justify-between px-4 py-3 border-b border-emerald-100">
+          <span class="font-extrabold text-emerald-700 text-sm"
+            >🌿 Bộ lọc & Góc làm việc</span
+          >
+          <button
+            id="btn-close-sidebar"
+            type="button"
+            class="p-1.5 rounded-xl text-slate-400 hover:text-emerald-600 hover:bg-emerald-50">
+            &times;
+          </button>
+        </div>
+
+        <!-- Sidebar Scrollable Body -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-5">
+          <!-- Search Box on Mobile / Tablet -->
+          <div class="xl:hidden">
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs"
+                >🔍</span
+              >
+              <input
+                id="mobile-search-input"
+                type="text"
+                placeholder="Tìm sự kiện, file đính kèm..."
+                class="w-full pl-8 pr-3 py-2 text-xs font-semibold bg-emerald-50 border border-emerald-200 rounded-2xl focus:bg-white focus:border-emerald-400 outline-none transition" />
+            </div>
+          </div>
+
+          <!-- Cute Mascot Progress & Cheer Card (Pastel Mint Gradient) -->
+          <div
+            class="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 text-white rounded-3xl p-4 shadow-md shadow-emerald-200/70 relative overflow-hidden">
+            <div class="flex items-center justify-between mb-1.5">
+              <div class="flex items-center gap-2">
+                <span id="mascot-mood-icon" class="text-2xl">🐰</span>
+                <div>
+                  <div class="text-xs font-extrabold">Tiến độ của bạn</div>
+                  <p
+                    id="mascot-cheer-text"
+                    class="text-[11px] text-emerald-50 font-medium">
+                    Cố lên nào! Hôm nay sẽ tuyệt lắm 🌿
+                  </p>
+                </div>
+              </div>
+              <span
+                id="stat-percent"
+                class="text-xs font-extrabold bg-white/25 px-2.5 py-1 rounded-full"
+                >0%</span
+              >
+            </div>
+
+            <div
+              class="w-full h-2.5 bg-white/25 rounded-full overflow-hidden mb-3 mt-2">
+              <div
+                id="stat-progress-bar"
+                class="h-full bg-amber-300 rounded-full transition-all duration-500"
+                style="width: 0%"></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div class="bg-white/15 backdrop-blur-xs rounded-2xl py-2 px-1">
+                <div id="stat-total" class="text-base font-extrabold">0</div>
+                <div class="text-[10px] text-emerald-50 font-semibold">
+                  Tổng lịch
+                </div>
+              </div>
+              <div class="bg-white/15 backdrop-blur-xs rounded-2xl py-2 px-1">
+                <div
+                  id="stat-pending"
+                  class="text-base font-extrabold text-amber-200">
+                  0
+                </div>
+                <div class="text-[10px] text-emerald-50 font-semibold">
+                  Cần làm
+                </div>
+              </div>
+              <div class="bg-white/15 backdrop-blur-xs rounded-2xl py-2 px-1">
+                <div
+                  id="stat-completed"
+                  class="text-base font-extrabold text-lime-200">
+                  0
+                </div>
+                <div class="text-[10px] text-emerald-50 font-semibold">
+                  Đã xong
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Filter Section -->
+          <div>
+            <div class="flex items-center justify-between mb-2.5">
+              <h3
+                class="text-xs font-extrabold uppercase tracking-wider text-emerald-600">
+                🎨 Danh mục sắc màu
+              </h3>
+              <button
+                id="btn-open-category-modal"
+                type="button"
+                class="text-xs font-bold text-teal-700 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-full transition cursor-pointer">
+                + Thêm mới
+              </button>
+            </div>
+            <div id="sidebar-category-list" class="space-y-1.5">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Status Filter Section -->
+          <div>
+            <h3
+              class="text-xs font-extrabold uppercase tracking-wider text-emerald-600 mb-2.5">
+              🌱 Trạng thái
+            </h3>
+            <div
+              class="grid grid-cols-3 gap-1.5 bg-emerald-50 p-1 rounded-2xl border border-emerald-100">
+              <button
+                type="button"
+                data-status=""
+                class="status-filter-btn py-1.5 text-xs font-bold rounded-xl bg-white text-emerald-700 shadow-xs transition cursor-pointer">
+                Tất cả
+              </button>
+              <button
+                type="button"
+                data-status="pending"
+                class="status-filter-btn py-1.5 text-xs font-bold rounded-xl text-teal-700 hover:text-emerald-600 transition cursor-pointer">
+                Chưa làm
+              </button>
+              <button
+                type="button"
+                data-status="completed"
+                class="status-filter-btn py-1.5 text-xs font-bold rounded-xl text-teal-700 hover:text-emerald-600 transition cursor-pointer">
+                Đã xong
+              </button>
+            </div>
+          </div>
+
+          <!-- Upcoming Events with Live Countdown & Attachments -->
+          <div>
+            <div class="flex items-center justify-between mb-2.5">
+              <h3
+                class="text-xs font-extrabold uppercase tracking-wider text-emerald-600">
+                ⏳ Đếm ngược & File
+              </h3>
+              <span
+                id="upcoming-count-badge"
+                class="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full"
+                >0</span
+              >
+            </div>
+            <div id="sidebar-upcoming-list" class="space-y-2.5">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar Footer Tip -->
+        <div
+          class="p-3 border-t border-emerald-100 bg-emerald-50/60 text-[11px] text-teal-800 font-semibold flex items-center gap-2">
+          <span class="text-base">📎</span>
+          <span>Bấm vào tên file trên thẻ để mở tài liệu làm việc ngay!</span>
+        </div>
+      </aside>
+
+      <!-- MAIN CALENDAR AREA -->
+      <main class="flex-1 flex flex-col overflow-hidden p-2 sm:p-4">
+        <div
+          class="flex-1 bg-white/95 backdrop-blur-sm rounded-3xl border-2 border-emerald-200/80 shadow-md shadow-emerald-100/50 p-2 sm:p-4 overflow-hidden flex flex-col">
+          <div id="calendar" class="flex-1 min-h-0"></div>
+        </div>
+      </main>
+
+      <!-- Floating Action Button (Mobile Only) -->
+      <button
+        id="fab-add-event"
+        type="button"
+        class="md:hidden fixed right-5 bottom-6 z-20 w-14 h-14 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-300 flex items-center justify-center text-2xl active:scale-95 transition"
+        aria-label="Thêm sự kiện mới">
+        🍀
+      </button>
+    </div>
+
+    <!-- ====================================================================
+       ALWAYS-ON DESKTOP FLOATING TASK NOTIFICATION & COUNTDOWN HUD
+       ==================================================================== -->
+    <aside
+      id="desktop-task-hud"
+      class="fixed bottom-4 right-4 z-40 w-80 sm:w-96 bg-white/95 backdrop-blur-md rounded-3xl border-2 border-emerald-300 floating-hud-shadow overflow-hidden transition-all duration-200">
+      <!-- HUD Draggable Title Bar -->
+      <div
+        id="hud-drag-handle"
+        class="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 px-4 py-2.5 text-white flex items-center justify-between cursor-move select-none">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-lg animate-bounce">🔔</span>
+          <div class="truncate">
+            <h4 class="text-xs font-extrabold tracking-wide leading-tight">
+              Bảng Nhắc Việc & Đếm Ngược
+            </h4>
+            <p
+              id="hud-subtitle"
+              class="text-[10px] text-emerald-50 font-semibold truncate">
+              Luôn hiển thị giúp bạn đa nhiệm 🌿
+            </p>
+          </div>
+        </div>
+
+        <!-- HUD Action Buttons -->
+        <div class="flex items-center gap-1 shrink-0">
+          <button
+            id="btn-enable-desktop-notify"
+            type="button"
+            class="p-1.5 rounded-xl bg-white/20 hover:bg-white/35 text-white text-xs transition cursor-pointer"
+            title="Bật thông báo đẩy trên màn hình Windows khi đến giờ làm việc">
+            🔈
+          </button>
+          <button
+            id="btn-pip-hud"
+            type="button"
+            class="p-1.5 rounded-xl bg-white/20 hover:bg-white/35 text-white text-xs transition cursor-pointer"
+            title="Ghim thành cửa sổ mini luôn nổi đè lên mọi phần mềm máy tính (Always-on-Top)">
+            📌
+          </button>
+          <button
+            id="btn-minimize-hud"
+            type="button"
+            class="p-1.5 rounded-xl bg-white/20 hover:bg-white/35 text-white text-xs font-extrabold transition cursor-pointer"
+            title="Thu gọn / Mở rộng khung nhắc việc">
+            —
+          </button>
+        </div>
+      </div>
+
+      <!-- HUD Body (Collapsible) -->
+      <div id="hud-body" class="p-3.5 space-y-3 max-h-[68vh] overflow-y-auto">
+        <!-- Active / Next Urgent Task Live Countdown Hero Box -->
+        <div
+          id="hud-focus-box"
+          class="rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 border-2 border-emerald-200/80 p-3">
+          <!-- Populated dynamically every second by app.js -->
+        </div>
+
+        <!-- Pending Tasks List with Countdown & Quick File Open -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span
+              class="text-[11px] font-extrabold uppercase tracking-wider text-teal-800">
+              📝 Danh sách việc cần làm (<span id="hud-pending-count">0</span>)
+            </span>
+            <button
+              id="btn-hud-quick-add"
+              type="button"
+              class="text-[11px] font-extrabold text-emerald-600 hover:text-teal-700 cursor-pointer">
+              + Thêm việc
+            </button>
+          </div>
+          <div
+            id="hud-task-list"
+            class="space-y-2 max-h-56 overflow-y-auto pr-0.5">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+       MODAL 1: THÊM / SỬA SỰ KIỆN & ĐÍNH KÈM FILE ĐA NHIỆM (#event-modal)
+       ==================================================================== -->
+    <div
+      id="event-modal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-teal-950/45 backdrop-blur-[3px] p-3 sm:p-4 overflow-y-auto"
+      role="dialog"
+      aria-modal="true">
+      <div
+        class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border-2 border-emerald-200 overflow-hidden animate-modal my-auto">
+        <!-- Modal Header -->
+        <div
+          class="px-5 py-4 border-b border-emerald-100 flex items-center justify-between bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50">
+          <div class="flex items-center gap-2.5">
+            <span
+              id="modal-category-dot"
+              class="w-4 h-4 rounded-full bg-emerald-500 shrink-0 shadow-xs"></span>
+            <h3
+              id="event-modal-title"
+              class="text-base font-extrabold text-teal-950">
+              🍀 Thêm công việc / lịch mới
+            </h3>
+          </div>
+          <button
+            id="btn-close-event-modal"
+            type="button"
+            class="p-1.5 rounded-2xl text-slate-400 hover:text-emerald-600 hover:bg-emerald-100/60 transition cursor-pointer">
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Live Deadline Countdown Banner inside Modal -->
+        <div
+          id="modal-countdown-banner"
+          class="hidden px-5 py-2.5 bg-gradient-to-r from-emerald-50 via-teal-50 to-amber-50 border-b border-emerald-100 flex items-center justify-between">
+          <span
+            class="text-xs font-bold text-teal-800 flex items-center gap-1.5">
+            <span>⏱️</span>
+            <span id="modal-countdown-label">Thời gian còn lại:</span>
+          </span>
+          <span
+            id="modal-countdown-timer"
+            class="text-xs font-extrabold px-3 py-1 rounded-full bg-white text-emerald-700 border border-emerald-200 shadow-2xs">
+            --:--:--
+          </span>
+        </div>
+
+        <!-- Modal Form -->
+        <form
+          id="event-form"
+          class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
+          <input type="hidden" id="event-id" value="" />
+          <input type="hidden" id="event-recurrence-group-id" value="" />
+
+          <!-- Tiêu đề -->
+          <div>
+            <label
+              for="event-title"
+              class="block text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">
+              🌿 Tiêu đề công việc / sự kiện
+              <span class="text-rose-500">*</span>
+            </label>
+            <input
+              id="event-title"
+              type="text"
+              required
+              maxlength="255"
+              placeholder="Ví dụ: Hoàn thành báo cáo, Học bài, Làm slide thuyết trình..."
+              class="w-full px-4 py-2.5 text-sm bg-emerald-50/50 border-2 border-emerald-200/80 rounded-2xl focus:bg-white focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition font-bold text-teal-950" />
+          </div>
+
+          <!-- ================================================================
+             1. KHOẢNG NGÀY THỰC HIỆN (TỪ NGÀY BẮT ĐẦU -> ĐẾN NGÀY KẾT THÚC)
+             ================================================================ -->
+          <div
+            class="bg-emerald-50/50 border-2 border-emerald-200/80 rounded-2xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between flex-wrap gap-1">
+              <span
+                class="text-xs font-extrabold uppercase tracking-wider text-teal-800">
+                📅 1. Ngày thực hiện (Từ ngày → Đến ngày)
+              </span>
+              <div class="flex items-center gap-1">
+                <button
+                  type="button"
+                  data-days-span="0"
+                  class="days-span-chip px-2 py-0.5 text-[11px] font-bold bg-white hover:bg-emerald-100 text-teal-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                  Trong 1 ngày
+                </button>
+                <button
+                  type="button"
+                  data-days-span="2"
+                  class="days-span-chip px-2 py-0.5 text-[11px] font-bold bg-white hover:bg-emerald-100 text-teal-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                  3 ngày
+                </button>
+                <button
+                  type="button"
+                  data-days-span="4"
+                  class="days-span-chip px-2 py-0.5 text-[11px] font-bold bg-white hover:bg-emerald-100 text-teal-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                  5 ngày
+                </button>
+                <button
+                  type="button"
+                  data-days-span="6"
+                  class="days-span-chip px-2 py-0.5 text-[11px] font-bold bg-white hover:bg-emerald-100 text-teal-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                  1 tuần
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label
+                  for="event-start-date"
+                  class="block text-[11px] font-bold text-teal-700 mb-1">
+                  Từ ngày bắt đầu <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  id="event-start-date"
+                  type="date"
+                  required
+                  class="w-full px-3 py-2 text-sm font-bold bg-white border border-emerald-200 rounded-xl focus:border-emerald-400 outline-none transition" />
+              </div>
+              <div>
+                <label
+                  for="event-end-date"
+                  class="block text-[11px] font-bold text-teal-700 mb-1">
+                  Đến ngày kết thúc (Hạn nộp)
+                  <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  id="event-end-date"
+                  type="date"
+                  required
+                  class="w-full px-3 py-2 text-sm font-bold bg-white border border-emerald-200 rounded-xl focus:border-emerald-400 outline-none transition" />
+              </div>
+            </div>
+          </div>
+
+          <!-- ================================================================
+             2. CÀI ĐẶT THỜI GIAN LÀM TRONG 1 NGÀY (KHUNG GIỜ & SỐ TIẾNG/NGÀY)
+             ================================================================ -->
+          <div
+            class="bg-gradient-to-br from-emerald-50/70 via-teal-50/50 to-white border-2 border-emerald-200/90 rounded-2xl p-3.5 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <span
+                class="text-xs font-extrabold uppercase tracking-wider text-teal-800">
+                ⏰ 2. Thời gian làm trong 1 ngày
+              </span>
+              <span
+                id="daily-duration-summary"
+                class="text-xs font-extrabold px-3 py-0.5 rounded-full bg-white text-emerald-700 border border-emerald-300 shadow-2xs">
+                ⏳ Làm 2 giờ / ngày
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div>
+                <label
+                  for="event-daily-start-time"
+                  class="block text-[11px] font-bold text-teal-700 mb-1">
+                  🕒 Giờ bắt đầu mỗi ngày <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  id="event-daily-start-time"
+                  type="time"
+                  required
+                  class="w-full px-3 py-2 text-sm font-bold bg-white border border-emerald-200 rounded-xl focus:border-emerald-400 outline-none transition" />
+              </div>
+              <div>
+                <label
+                  for="event-daily-end-time"
+                  class="block text-[11px] font-bold text-teal-700 mb-1">
+                  ⏰ Giờ nghỉ mỗi ngày <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  id="event-daily-end-time"
+                  type="time"
+                  required
+                  class="w-full px-3 py-2 text-sm font-bold bg-white border border-emerald-200 rounded-xl focus:border-emerald-400 outline-none transition" />
+              </div>
+              <div>
+                <label
+                  for="event-daily-hours-input"
+                  class="block text-[11px] font-bold text-teal-700 mb-1">
+                  ⌛ Số tiếng làm / 1 ngày
+                </label>
+                <div class="relative">
+                  <input
+                    id="event-daily-hours-input"
+                    type="number"
+                    min="0.25"
+                    max="23.5"
+                    step="0.5"
+                    value="2"
+                    class="w-full pl-3 pr-14 py-2 text-sm font-extrabold bg-white border border-emerald-200 rounded-xl focus:border-emerald-400 outline-none transition text-teal-900" />
+                  <span
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-teal-600 pointer-events-none">
+                    giờ/ngày
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Nút chọn nhanh số giờ làm trong 1 ngày & Ca làm việc -->
+            <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
+              <span class="text-[11px] font-bold text-teal-600 mr-0.5"
+                >⚡ Chọn nhanh mỗi ngày:</span
+              >
+              <button
+                type="button"
+                data-duration="30"
+                class="duration-chip px-2.5 py-1 text-[11px] font-bold bg-white hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                30p/ngày
+              </button>
+              <button
+                type="button"
+                data-duration="60"
+                class="duration-chip px-2.5 py-1 text-[11px] font-bold bg-white hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                1 giờ/ngày
+              </button>
+              <button
+                type="button"
+                data-duration="120"
+                class="duration-chip px-2.5 py-1 text-[11px] font-bold bg-white hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                2 giờ/ngày
+              </button>
+              <button
+                type="button"
+                data-duration="180"
+                class="duration-chip px-2.5 py-1 text-[11px] font-bold bg-white hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                3 giờ/ngày
+              </button>
+              <button
+                type="button"
+                data-duration="240"
+                class="duration-chip px-2.5 py-1 text-[11px] font-bold bg-white hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                4 giờ/ngày
+              </button>
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-[11px] font-bold text-teal-600 mr-0.5"
+                >🌤️ Ca làm mẫu:</span
+              >
+              <button
+                type="button"
+                data-shift="08:00-11:00"
+                class="shift-chip px-2.5 py-1 text-[11px] font-bold bg-white hover:bg-emerald-100 text-teal-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                🌅 Sáng (08:00 - 11:00)
+              </button>
+              <button
+                type="button"
+                data-shift="14:00-17:00"
+                class="shift-chip px-2.5 py-1 text-[11px] font-bold bg-white hover:bg-emerald-100 text-teal-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                ☀️ Chiều (14:00 - 17:00)
+              </button>
+              <button
+                type="button"
+                data-shift="19:00-22:00"
+                class="shift-chip px-2.5 py-1 text-[11px] font-bold bg-white hover:bg-emerald-100 text-teal-700 border border-emerald-200 rounded-full transition cursor-pointer">
+                🌙 Tối (19:00 - 22:00)
+              </button>
+            </div>
+
+            <input type="hidden" id="event-start" />
+            <input type="hidden" id="event-end" />
+          </div>
+
+          <!-- Danh mục & Trạng thái -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label
+                for="event-category"
+                class="block text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">
+                🎨 Danh mục
+              </label>
+              <select
+                id="event-category"
+                class="w-full px-3.5 py-2.5 text-sm bg-emerald-50/50 border-2 border-emerald-200/80 rounded-2xl focus:bg-white focus:border-emerald-400 outline-none transition font-bold">
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+            <div>
+              <label
+                for="event-status"
+                class="block text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">
+                🌟 Trạng thái
+              </label>
+              <select
+                id="event-status"
+                class="w-full px-3.5 py-2.5 text-sm bg-emerald-50/50 border-2 border-emerald-200/80 rounded-2xl focus:bg-white focus:border-emerald-400 outline-none transition font-bold">
+                <option value="pending">⏳ Chưa làm (Đang đếm ngược)</option>
+                <option value="completed">🍀 Đã hoàn thành xong!</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ================================================================
+             3. MÀU SẮC & ĐÁNH DẤU RIÊNG CHO CÔNG VIỆC (DỄ PHÂN BIỆT TRÊN LỊCH)
+             ================================================================ -->
+          <div
+            class="bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/40 border-2 border-emerald-200/90 rounded-2xl p-3.5 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-1">
+              <span
+                class="text-xs font-extrabold uppercase tracking-wider text-teal-800">
+                🏷️ 3. Màu riêng & Đánh dấu phân biệt công việc
+              </span>
+              <span class="text-[11px] font-bold text-teal-600">
+                Giúp không bị trùng màu các việc cùng danh mục
+              </span>
+            </div>
+
+            <!-- Chọn Màu Pastel riêng cho thẻ công việc -->
+            <div>
+              <label class="block text-[11px] font-bold text-teal-700 mb-1.5">
+                🎨 Chọn màu thẻ riêng cho công việc này:
+              </label>
+              <div class="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  data-preset-color="#A7F3D0"
+                  class="color-swatch-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition cursor-pointer"
+                  style="background-color: #a7f3d0"
+                  title="Xanh Mint Sữa"></button>
+                <button
+                  type="button"
+                  data-preset-color="#BAE6FD"
+                  class="color-swatch-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition cursor-pointer"
+                  style="background-color: #bae6fd"
+                  title="Xanh Bầu Trời"></button>
+                <button
+                  type="button"
+                  data-preset-color="#DDD6FE"
+                  class="color-swatch-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition cursor-pointer"
+                  style="background-color: #ddd6fe"
+                  title="Tím Lavender"></button>
+                <button
+                  type="button"
+                  data-preset-color="#FDE68A"
+                  class="color-swatch-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition cursor-pointer"
+                  style="background-color: #fde68a"
+                  title="Vàng Bơ Pastel"></button>
+                <button
+                  type="button"
+                  data-preset-color="#FBCFE8"
+                  class="color-swatch-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition cursor-pointer"
+                  style="background-color: #fbcfe8"
+                  title="Hồng Sakura"></button>
+                <button
+                  type="button"
+                  data-preset-color="#FED7AA"
+                  class="color-swatch-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition cursor-pointer"
+                  style="background-color: #fed7aa"
+                  title="Cam Đào Pastel"></button>
+                <button
+                  type="button"
+                  data-preset-color="#99F6E4"
+                  class="color-swatch-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition cursor-pointer"
+                  style="background-color: #99f6e4"
+                  title="Xanh Ngọc Aqua"></button>
+                <button
+                  type="button"
+                  data-preset-color="#D9F99D"
+                  class="color-swatch-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition cursor-pointer"
+                  style="background-color: #d9f99d"
+                  title="Xanh Táo Non"></button>
+                <button
+                  type="button"
+                  data-preset-color="#FECDD3"
+                  class="color-swatch-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition cursor-pointer"
+                  style="background-color: #fecdd3"
+                  title="Hồng San Hô"></button>
+                <button
+                  type="button"
+                  data-preset-color="#C7D2FE"
+                  class="color-swatch-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition cursor-pointer"
+                  style="background-color: #c7d2fe"
+                  title="Xanh Periwinkle"></button>
+
+                <!-- Ô tự chọn màu bất kỳ -->
+                <div
+                  class="flex items-center gap-1.5 ml-1 bg-white px-2 py-1 rounded-xl border border-emerald-200">
+                  <input
+                    id="event-custom-color"
+                    type="color"
+                    value="#A7F3D0"
+                    class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent p-0"
+                    title="Tự pha màu tùy thích" />
+                  <span class="text-[11px] font-bold text-teal-700"
+                    >Tự chọn</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Chọn Nhãn ưu tiên & Biểu tượng đánh dấu riêng -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label
+                  for="event-priority"
+                  class="block text-[11px] font-bold text-teal-700 mb-1">
+                  🚩 Nhãn đánh dấu nổi bật
+                </label>
+                <select
+                  id="event-priority"
+                  class="w-full px-3 py-2 text-xs font-extrabold bg-white border border-emerald-200 rounded-xl focus:border-emerald-400 outline-none transition">
+                  <option value="normal">🌿 Bình thường</option>
+                  <option value="important">
+                    ⭐ Quan trọng (Viền Vàng Sao)
+                  </option>
+                  <option value="urgent">
+                    🔥 Gấp / Ưu tiên cao (Viền Đỏ Cam)
+                  </option>
+                  <option value="exam">
+                    🎯 Deadline lớn / Thi cử (Viền Tím)
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label
+                  for="event-custom-icon"
+                  class="block text-[11px] font-bold text-teal-700 mb-1">
+                  ✨ Ký hiệu / Icon riêng đầu dòng
+                </label>
+                <div class="flex items-center gap-1.5">
+                  <input
+                    id="event-custom-icon"
+                    type="text"
+                    maxlength="6"
+                    placeholder="🌿"
+                    class="w-12 px-2 py-1.5 text-center text-sm font-bold bg-white border border-emerald-200 rounded-xl focus:border-emerald-400 outline-none" />
+                  <div class="flex items-center gap-1 flex-wrap">
+                    <button
+                      type="button"
+                      data-preset-icon="💻"
+                      class="icon-chip px-2 py-1 text-xs bg-white hover:bg-emerald-100 border border-emerald-200 rounded-lg cursor-pointer"
+                      title="Project / Code">
+                      💻
+                    </button>
+                    <button
+                      type="button"
+                      data-preset-icon="✍️"
+                      class="icon-chip px-2 py-1 text-xs bg-white hover:bg-emerald-100 border border-emerald-200 rounded-lg cursor-pointer"
+                      title="Bài viết / Thu hoạch">
+                      ✍️
+                    </button>
+                    <button
+                      type="button"
+                      data-preset-icon="📘"
+                      class="icon-chip px-2 py-1 text-xs bg-white hover:bg-emerald-100 border border-emerald-200 rounded-lg cursor-pointer"
+                      title="Học bài / Đọc sách">
+                      📘
+                    </button>
+                    <button
+                      type="button"
+                      data-preset-icon="📊"
+                      class="icon-chip px-2 py-1 text-xs bg-white hover:bg-emerald-100 border border-emerald-200 rounded-lg cursor-pointer"
+                      title="Báo cáo / Slide">
+                      📊
+                    </button>
+                    <button
+                      type="button"
+                      data-preset-icon="🎓"
+                      class="icon-chip px-2 py-1 text-xs bg-white hover:bg-emerald-100 border border-emerald-200 rounded-lg cursor-pointer"
+                      title="Thi cử / Đồ án">
+                      🎓
+                    </button>
+                    <button
+                      type="button"
+                      data-preset-icon="🧪"
+                      class="icon-chip px-2 py-1 text-xs bg-white hover:bg-emerald-100 border border-emerald-200 rounded-lg cursor-pointer"
+                      title="Thực hành / Thí nghiệm">
+                      🧪
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================================================================
+             ĐÍNH KÈM FILE ĐA NHIỆM (MULTITASKING FILE ATTACHMENTS)
+             ================================================================ -->
+          <div
+            class="bg-gradient-to-br from-emerald-50/80 via-teal-50/60 to-white border-2 border-dashed border-emerald-300 rounded-2xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div>
+                <span
+                  class="text-xs font-extrabold uppercase tracking-wider text-teal-900 flex items-center gap-1.5">
+                  📎 Đính kèm File làm việc đa nhiệm
+                </span>
+                <p class="text-[11px] text-teal-600 font-medium">
+                  Gắn tài liệu PDF, Word, Excel, Slide, Hình ảnh... để bấm mở
+                  làm ngay trên lịch
+                </p>
+              </div>
+              <label
+                for="event-files-input"
+                class="px-3 py-1.5 text-xs font-extrabold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-xl shadow-xs cursor-pointer transition shrink-0">
+                + Chọn File
+              </label>
+              <input
+                id="event-files-input"
+                type="file"
+                multiple
+                class="hidden" />
+            </div>
+
+            <!-- Danh sách File đã lưu của sự kiện -->
+            <div
+              id="existing-attachments-list"
+              class="space-y-1.5 empty:hidden"></div>
+
+            <!-- Danh sách File mới vừa chọn (chờ lưu) -->
+            <div
+              id="pending-attachments-list"
+              class="space-y-1.5 empty:hidden"></div>
+          </div>
+
+          <!-- Lịch lặp lại (Recurring) -->
+          <div
+            class="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-3.5 space-y-2.5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label
+                  for="event-recurrence"
+                  class="block text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">
+                  🔁 Chu kỳ lặp lại
+                </label>
+                <select
+                  id="event-recurrence"
+                  class="w-full px-3 py-2 text-sm bg-white border border-emerald-200 rounded-xl focus:border-emerald-400 outline-none transition font-bold">
+                  <option value="none">Không lặp lại</option>
+                  <option value="daily">Hàng ngày (Daily)</option>
+                  <option value="weekly">Hàng tuần (Weekly)</option>
+                </select>
+              </div>
+              <div id="recurrence-until-wrapper" class="hidden">
+                <label
+                  for="event-recurrence-until"
+                  class="block text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">
+                  Lặp đến hết ngày
+                </label>
+                <input
+                  id="event-recurrence-until"
+                  type="date"
+                  class="w-full px-3 py-2 text-sm bg-white border border-emerald-200 rounded-xl focus:border-emerald-400 outline-none transition font-semibold" />
+              </div>
+            </div>
+            <p
+              id="recurrence-hint"
+              class="hidden text-xs text-emerald-700 font-bold">
+              ✨ Hệ thống sẽ tự động tạo các buổi lặp lại (kèm file đính kèm) và
+              kiểm tra trùng lịch.
+            </p>
+          </div>
+
+          <!-- Địa điểm & Ghi chú -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label
+                for="event-location"
+                class="block text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">
+                📍 Địa điểm / Link họp
+              </label>
+              <input
+                id="event-location"
+                type="text"
+                maxlength="255"
+                placeholder="Phòng học, Google Meet, Zoom..."
+                class="w-full px-3.5 py-2 text-sm bg-emerald-50/50 border-2 border-emerald-200/80 rounded-2xl focus:bg-white focus:border-emerald-400 outline-none transition font-medium" />
+            </div>
+            <div>
+              <label
+                for="event-notes"
+                class="block text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">
+                📝 Ghi chú nhanh
+              </label>
+              <input
+                id="event-notes"
+                type="text"
+                placeholder="Ghi chú công việc cần lưu ý..."
+                class="w-full px-3.5 py-2 text-sm bg-emerald-50/50 border-2 border-emerald-200/80 rounded-2xl focus:bg-white focus:border-emerald-400 outline-none transition font-medium" />
+            </div>
+          </div>
+
+          <!-- Modal Footer Buttons -->
+          <div
+            class="pt-3 border-t border-emerald-100 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5">
+              <button
+                id="btn-delete-event"
+                type="button"
+                class="hidden px-3.5 py-2 text-xs font-extrabold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-2xl transition cursor-pointer">
+                🗑 Xóa lịch
+              </button>
+              <button
+                id="btn-delete-series"
+                type="button"
+                class="hidden px-3.5 py-2 text-xs font-extrabold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-2xl transition cursor-pointer">
+                🔁 Xóa cả chuỗi
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2 ml-auto">
+              <button
+                id="btn-cancel-event"
+                type="button"
+                class="px-4 py-2 text-xs sm:text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-2xl transition cursor-pointer">
+                Đóng
+              </button>
+              <button
+                id="btn-save-event"
+                type="submit"
+                class="px-5 py-2 text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:to-teal-600 rounded-2xl shadow-md shadow-emerald-200 transition cursor-pointer">
+                🍀 Lưu công việc
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+       MODAL 2: CẢNH BÁO TRÙNG LỊCH THÔNG MINH (#conflict-modal)
+       ==================================================================== -->
+    <div
+      id="conflict-modal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-teal-950/55 backdrop-blur-[2px] p-4"
+      role="dialog"
+      aria-modal="true">
+      <div
+        class="bg-white w-full max-w-md rounded-3xl shadow-2xl border-2 border-amber-300 overflow-hidden animate-modal">
+        <div
+          class="bg-gradient-to-r from-amber-50 to-emerald-50 px-5 py-4 border-b border-amber-200 flex items-start gap-3">
+          <div
+            class="w-11 h-11 rounded-2xl bg-amber-400/20 text-2xl flex items-center justify-center shrink-0">
+            🙊
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-teal-950">
+              Ơ kìa! Bị trùng khung giờ rồi!
+            </h3>
+            <p class="text-xs text-teal-700 font-medium mt-0.5">
+              Khung giờ bạn chọn đang trùng với công việc đã có trong lịch:
+            </p>
+          </div>
+        </div>
+
+        <div class="p-5">
+          <div
+            id="conflict-events-list"
+            class="space-y-2.5 max-h-60 overflow-y-auto pr-1"></div>
+
+          <p class="text-xs text-teal-700 font-semibold mt-4">
+            Bạn muốn chọn lại giờ khác hay vẫn lưu song song để làm đa nhiệm?
+          </p>
+
+          <div class="mt-5 flex items-center justify-end gap-2.5">
+            <button
+              id="btn-conflict-cancel"
+              type="button"
+              class="px-4 py-2 text-xs sm:text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-2xl transition cursor-pointer">
+              Chọn giờ khác
+            </button>
+            <button
+              id="btn-conflict-force"
+              type="button"
+              class="px-4 py-2 text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-2xl shadow-sm transition cursor-pointer">
+              ✨ Vẫn lưu đa nhiệm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+       MODAL 3: THÊM DANH MỤC MÀU SẮC MỚI (#category-modal)
+       ==================================================================== -->
+    <div
+      id="category-modal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-teal-950/45 backdrop-blur-[2px] p-4"
+      role="dialog"
+      aria-modal="true">
+      <div
+        class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border-2 border-emerald-200 overflow-hidden animate-modal">
+        <div
+          class="px-5 py-4 border-b border-emerald-100 flex items-center justify-between bg-emerald-50/60">
+          <h3 class="text-sm font-extrabold text-teal-950">
+            🎨 Thêm danh mục dễ thương
+          </h3>
+          <button
+            id="btn-close-category-modal"
+            type="button"
+            class="p-1 rounded-xl text-slate-400 hover:text-emerald-600">
+            &times;
+          </button>
+        </div>
+        <form id="category-form" class="p-5 space-y-4">
+          <div>
+            <label
+              for="cat-name"
+              class="block text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">
+              Tên danh mục <span class="text-rose-500">*</span>
+            </label>
+            <input
+              id="cat-name"
+              type="text"
+              required
+              maxlength="50"
+              placeholder="Ví dụ: Đồ án, Ngoại ngữ, Chăm sóc bản thân..."
+              class="w-full px-3.5 py-2 text-sm bg-emerald-50/50 border-2 border-emerald-200 rounded-2xl focus:bg-white focus:border-emerald-400 outline-none font-bold" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label
+                for="cat-icon"
+                class="block text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">
+                Icon / Emoji
+              </label>
+              <input
+                id="cat-icon"
+                type="text"
+                maxlength="4"
+                value="🌿"
+                class="w-full px-3 py-2 text-base bg-emerald-50/50 border-2 border-emerald-200 rounded-2xl text-center" />
+            </div>
+            <div>
+              <label
+                for="cat-color"
+                class="block text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">
+                Mã màu
+              </label>
+              <input
+                id="cat-color"
+                type="color"
+                value="#10B981"
+                class="w-full h-10 p-1 bg-emerald-50/50 border-2 border-emerald-200 rounded-2xl cursor-pointer" />
+            </div>
+          </div>
+          <div class="flex justify-end gap-2 pt-2">
+            <button
+              id="btn-cancel-category"
+              type="button"
+              class="px-4 py-2 text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-2xl cursor-pointer">
+              Hủy
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 text-xs font-extrabold text-white bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl shadow-sm cursor-pointer">
+              🌿 Tạo danh mục
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+       MODAL 4: XEM NHANH FILE ĐÍNH KÈM ĐA NHIỆM (#file-preview-modal)
+       ==================================================================== -->
+    <div
+      id="file-preview-modal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-teal-950/60 backdrop-blur-[3px] p-3 sm:p-6"
+      role="dialog"
+      aria-modal="true">
+      <div
+        class="bg-white w-full max-w-4xl h-[82vh] rounded-3xl shadow-2xl border-2 border-emerald-300 overflow-hidden flex flex-col animate-modal">
+        <div
+          class="px-5 py-3.5 bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 border-b border-emerald-200 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-lg">📎</span>
+            <h3
+              id="preview-file-title"
+              class="text-sm font-extrabold text-teal-950 truncate">
+              Xem tài liệu đính kèm
+            </h3>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <a
+              id="preview-file-download"
+              href="#"
+              target="_blank"
+              download
+              class="px-3.5 py-1.5 text-xs font-extrabold text-white bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl shadow-xs">
+              ⬇️ Tải về / Mở tab mới
+            </a>
+            <button
+              id="btn-close-preview-modal"
+              type="button"
+              class="p-1.5 rounded-xl text-slate-500 hover:text-emerald-700 hover:bg-emerald-100 font-bold cursor-pointer">
+              ✕
+            </button>
+          </div>
+        </div>
+        <div
+          id="preview-file-body"
+          class="flex-1 bg-slate-100 overflow-auto flex items-center justify-center p-3">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+       TOAST NOTIFICATION CONTAINER
+       ==================================================================== -->
+    <div
+      id="toast-container"
+      class="fixed top-16 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- Main App Logic -->
+    <script src="/static/js/app.js?v=20261124_11"></script>
+  </body>
+</html>

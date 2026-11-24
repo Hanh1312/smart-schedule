@@ -1,0 +1,372 @@
+/* ==========================================================================
+   SmartSchedule PWA — Pure Light Mint Pastel Theme (Xanh Mint Nhạt Pha Trắng)
+   ========================================================================== */
+
+:root {
+  --primary: #9ae6bc;
+  --primary-hover: hsla(159, 62%, 68%, 0.936);
+  --secondary: #94e7c4;
+  --surface: #ffffff;
+  --bg-main: #f4fefb;
+  --border-color: #c6f7e9;
+  --text-main: #81cbb9;
+  --text-muted: #6fb595;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  height: 100%;
+  color: var(--text-main);
+  font-family:
+    "Quicksand",
+    "Nunito",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  background: linear-gradient(135deg, #f4fffc 0%, #f2fcff 55%, #f6fffb 100%);
+  background-attachment: fixed;
+}
+
+/* Họa tiết chấm bi xanh mint nhạt tươi sáng (pha trắng, không pha xám/đen) */
+.cute-polka-bg {
+  background-image:
+    radial-gradient(#b2f5e2 0.9px, transparent 0.9px),
+    radial-gradient(#bae6fd 0.9px, #f5fffc 0.9px);
+  background-size: 32px 32px;
+  background-position:
+    0 0,
+    16px 16px;
+}
+
+/* Thanh cuộn xanh mint nhạt */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #effdf9;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a7f3d0, #99f6e4);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #6ee7b7, #5eead4);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ==========================================================================
+   Chuyển các dải màu đậm (500/600) sang Xanh Mint Pastel Nhạt (Pha Trắng)
+   ========================================================================== */
+
+.from-emerald-500,
+.from-emerald-400 {
+  --tw-gradient-from: #98f2d8 var(--tw-gradient-from-position) !important;
+}
+
+.via-teal-500,
+.via-teal-400 {
+  --tw-gradient-via: #95f2e5 var(--tw-gradient-via-position) !important;
+}
+
+.to-cyan-500,
+.to-teal-500 {
+  --tw-gradient-to: #a5f3fc var(--tw-gradient-to-position) !important;
+}
+
+.hover\:from-emerald-600:hover {
+  --tw-gradient-from: #7eeac9 var(--tw-gradient-from-position) !important;
+}
+
+.hover\:to-teal-600:hover {
+  --tw-gradient-to: #82ebe0 var(--tw-gradient-to-position) !important;
+}
+
+/* Vì nền nút & thẻ tiến độ là Xanh Mint Nhạt tươi sáng nên chữ chuyển sang xanh ngọc đậm rõ nét */
+.from-emerald-500.text-white,
+.from-emerald-400.text-white,
+#hud-drag-handle,
+#btn-add-event,
+#btn-save-event {
+  color: #0d4f44 !important;
+}
+
+#hud-drag-handle p,
+.from-emerald-500 .text-emerald-50 {
+  color: #186658 !important;
+}
+
+.from-emerald-500 .bg-white\/15,
+.from-emerald-500 .bg-white\/25 {
+  background-color: rgba(255, 255, 255, 0.58) !important;
+  color: #0d4f44 !important;
+}
+
+.from-emerald-500 .text-amber-200 {
+  color: #d97706 !important;
+}
+
+.from-emerald-500 .text-lime-200 {
+  color: #059669 !important;
+}
+
+.bg-emerald-500 {
+  background-color: #7eeac9 !important;
+  color: #0d4f44 !important;
+}
+
+.hover\:bg-emerald-600:hover {
+  background-color: #66e2bc !important;
+}
+
+/* ==========================================================================
+   FullCalendar Light Baby Mint Theme Overrides
+   ========================================================================== */
+
+.fc {
+  --fc-border-color: #dcfce7;
+  --fc-today-bg-color: rgba(167, 243, 208, 0.22);
+  --fc-now-indicator-color: #34d399;
+  --fc-page-bg-color: #ffffff;
+  --fc-neutral-bg-color: #f4fefb;
+  --fc-list-event-hover-bg-color: #ecfdf5;
+  --fc-highlight-color: rgba(167, 243, 208, 0.3);
+  font-size: 0.875rem;
+}
+
+.fc .fc-col-header-cell {
+  background: linear-gradient(180deg, #f0fdf9 0%, #f5fefe 100%);
+  padding: 10px 4px;
+  font-weight: 700;
+  color: #155e54;
+}
+
+.fc .fc-col-header-cell-cushion {
+  text-decoration: none !important;
+  color: inherit;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+.fc .fc-day-today .fc-col-header-cell-cushion {
+  background: linear-gradient(135deg, #98f2d8, #99f6e4);
+  color: #0d4f44;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(110, 231, 183, 0.35);
+}
+
+.fc .fc-timegrid-slot {
+  height: 2.85rem;
+}
+
+.fc .fc-timegrid-slot-label-cushion {
+  font-size: 0.75rem;
+  color: #3b8276;
+  font-weight: 700;
+}
+
+/* Đường chỉ báo giờ hiện tại (Now Indicator) */
+.fc .fc-timegrid-now-indicator-line {
+  border-color: #34d399;
+  border-width: 2px;
+}
+
+.fc .fc-timegrid-now-indicator-arrow {
+  border-color: #34d399;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+
+/* Thẻ Sự kiện trên Lịch — Màu Pastel Nhạt Tươi Sáng & Viền Phân Biệt Rõ Ràng */
+.fc-event {
+  border-radius: 12px !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+  border-left: 5px solid rgba(13, 105, 88, 0.45) !important;
+  padding: 3px 6px !important;
+  margin: 1.5px 2px !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  transition:
+    transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.15s ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Viền đánh dấu mức độ ưu tiên nổi bật giúp không bỏ sót công việc */
+.fc-event.priority-urgent {
+  border-left: 6px solid #f43f5e !important;
+  box-shadow: 0 3px 10px rgba(244, 63, 94, 0.2) !important;
+}
+
+.fc-event.priority-important {
+  border-left: 6px solid #f59e0b !important;
+  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.2) !important;
+}
+
+.fc-event.priority-exam {
+  border-left: 6px solid #8b5cf6 !important;
+  box-shadow: 0 3px 10px rgba(139, 92, 246, 0.22) !important;
+}
+
+/* Chữ trên thẻ sự kiện màu xanh đậm nhẹ để nổi bật trên nền pastel nhạt */
+.fc-event,
+.fc-event .text-white {
+  color: #134e48 !important;
+}
+
+.fc-event:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 6px 16px rgba(94, 234, 212, 0.32);
+  z-index: 25 !important;
+}
+
+/* Sự kiện đã hoàn thành (completed) */
+.fc-event.event-completed {
+  opacity: 0.65;
+}
+
+.fc-event.event-completed .fc-custom-title {
+  text-decoration: line-through;
+}
+
+/* Chế độ Danh sách (listWeek) */
+.fc-theme-standard .fc-list {
+  border: 2px solid #c6f7e9;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.fc .fc-list-day-cushion {
+  background: linear-gradient(90deg, #effdf8, #f2fcff) !important;
+  padding: 10px 16px !important;
+}
+
+.fc .fc-list-event td {
+  padding: 12px 16px !important;
+  cursor: pointer;
+}
+
+/* Ô ngày trong chế độ Tháng (dayGridMonth) */
+.fc .fc-daygrid-day-number {
+  font-weight: 700;
+  color: #155e54;
+  padding: 6px 10px;
+  text-decoration: none !important;
+}
+
+.fc .fc-day-today .fc-daygrid-day-number {
+  background: linear-gradient(135deg, #98f2d8, #99f6e4);
+  color: #0d4f44;
+  font-weight: 800;
+  border-radius: 9999px;
+  margin: 4px;
+  padding: 2px 9px;
+  box-shadow: 0 2px 8px rgba(110, 231, 183, 0.35);
+}
+
+/* ==========================================================================
+   Floating Desktop Task Notification & Countdown HUD
+   ========================================================================== */
+
+.floating-hud-shadow {
+  box-shadow:
+    0 16px 38px -6px rgba(110, 231, 183, 0.32),
+    0 6px 16px -4px rgba(153, 246, 228, 0.25);
+}
+
+@keyframes floatBob {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-float-cute {
+  animation: floatBob 3s ease-in-out infinite;
+}
+
+@keyframes pulseUrgent {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.35);
+  }
+  50% {
+    transform: scale(1.015);
+    box-shadow: 0 0 0 5px rgba(251, 191, 36, 0);
+  }
+}
+
+.urgent-pulse {
+  animation: pulseUrgent 1.8s infinite;
+}
+
+/* Hiệu ứng Modal & Confetti */
+@keyframes modalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal {
+  animation: modalPop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.8) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-90px) scale(1.35) rotate(25deg);
+  }
+}
+
+.cute-confetti-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-size: 1.35rem;
+  animation: confettiFall 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Responsive trên màn hình Mobile (< 768px) */
+@media (max-width: 767px) {
+  .fc {
+    font-size: 0.8rem;
+  }
+
+  .fc .fc-timegrid-slot {
+    height: 2.75rem;
+  }
+
+  .fc .fc-col-header-cell {
+    padding: 6px 2px;
+  }
+}
